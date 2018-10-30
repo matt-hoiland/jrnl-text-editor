@@ -1,26 +1,21 @@
-#include <ctype.h>
-#include <errno.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdlib>
 #include <termios.h>
 #include <unistd.h>
 
-struct termios orig_termios;
+#include "debug.h"
+#include "KeyboardReader.h"
 
-void die(const char *s) {
-    perror(s);
-    exit(1);
-}
+struct termios orig_termios;
 
 void disableRawMode() {
     if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios) == -1) {
-        die("tcsetattr");
+        DIE("tcsetattr");
     }
 }
 
 void enableRawMode() {
     if (tcgetattr(STDIN_FILENO, &orig_termios) == -1) {
-        die("tcgetattr");
+        DIE("tcgetattr");
     }
     atexit(disableRawMode);
 
@@ -44,24 +39,14 @@ void enableRawMode() {
     raw.c_cc[VTIME] = 1;
 
     if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw) == -1) {
-        die("tcsetattr");
+        DIE("tcsetattr");
     }
 }
 
 int main() {
     enableRawMode();
 
-    while (true) {
-        char c = '\0';
-        if (read(STDIN_FILENO, &c, 1) == -1 && errno != EAGAIN) {
-            die("read");
-        }
-        if (iscntrl(c)) {
-            printf("0x%02X | %03d\r\n", c, c);
-        } else {
-            printf("0x%02X | %03d ('%c')\r\n", c, c, c);
-        }
-        if (c == 'q') { break; }
-    }
+    KeyboardReader kr;
+    kr.run();
     return 0;
 }
