@@ -9,10 +9,10 @@ enum KeyCode {
 
 class KeyboardReader {
 public:
-    void run();
+  void run();
 
 private:
-    int getKeyPress();
+  int getKeyPress();
 };
 
 #endif /* KEYBOARDREADER_H_ */
