@@ -1,6 +1,10 @@
 #ifndef KEYBOARDREADER_H_
 #define KEYBOARDREADER_H_
 
+#include <vector>
+
+#include "IKeyboardListener.h"
+
 #define CTRL_KEY(k) ((k) & 0x1f)
 
 enum KeyCode {
@@ -11,8 +15,12 @@ enum KeyCode {
 };
 
 class KeyboardReader {
+private:
+  std::vector<IKeyboardListener*> listeners;
+
 public:
   void run();
+  void registerListener(IKeyboardListener* listener);
 
 private:
   int getByte();
