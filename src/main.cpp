@@ -5,6 +5,7 @@
 #include "debug.h"
 #include "KeyboardReader.h"
 #include "FirstView.h"
+#include "ClearScreen.h"
 
 struct termios orig_termios;
 
@@ -48,8 +49,9 @@ int main() {
   enableRawMode();
 
   FirstView fv;
+  ClearScreen cs;
   KeyboardReader kr;
-  kr.registerListener(&fv);
+  kr.registerListener(&cs);
   kr.run();
   return 0;
 }
